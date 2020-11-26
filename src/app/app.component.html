@@ -1,11 +1,76 @@
-<div class="w-full m-0 p-0 bg-cover bg-bottom" style="background-image:url('assets/home-bg-landscape.jpg'); height: 50vh; max-height:300px;">
-  <div class="container max-w-4xl mx-auto pt-16 md:pt-32 text-center break-normal">
-    <!--Title-->
-      <p class="text-white font-extrabold text-3xl md:text-5xl">
-        Main title
-      </p>
-      <p class="text-xl md:text-2xl text-gray-500">Welcom to our site</p>
+<div class="flex flex-col justify-center items-center h-screen bg-blue-lightest">
+  <div class="w-54">
+    <app-custom-modal *ngIf="showModal" (buttonClick)="toggleModal()" (actionButtonClick)="processTransfer()" modalTitle="Transfer Money"
+      Content="Do you want to process this transaction?"></app-custom-modal>
+    <div class="text-3xl">
+      <app-bank-icon></app-bank-icon>
+    </div>
+    <h1 class="text-3xl mb-2 text-grey-darkest">Bankajar</h1>
+  </div>
+  <div class="w-2/4 font-light text-xs flex justify-end align-end">
+    <div class="text-right">Balance: {{ totalBalance | number: ".2" }}</div>
+  </div>
+  <div class="bg-white w-2/4 h-60 rounded flex card text-grey-darkest border-2">
+    <div class="w-full flex flex-col">
+      <div class="p-4 pb-0 flex-1">
+        <form [formGroup]="paymentForm">
+          <div class="mb-4">
+            <label class="block uppercase tracking-wide text-xs font-bold">IBAN
+              <small *ngIf="validIbanCharachter && !remainingIbanCharachters"
+                class="font-light font-gray-500 mr-2">(Valid Chars:{{ validIbanCharachter }})</small>
+              <small *ngIf="validIbanCharachter && remainingIbanCharachters"
+                class="font-light font-gray-500">(Charachters Remaining:{{ remainingIbanCharachters }})</small></label>
+            <input class="w-full shadow-inner uppercase p-4 border-0" type="text" formControlName="iban"
+              placeholder="Enter the destination IBAN" />
+            <span [ngClass]="flag ? 'flag-icon my-2 flag-icon-' + flag : null"></span>
+            <div class="flex justify-between align-center">
+              <span *ngIf="bank" class="text-xs mt-1 h-3 font-light">{{
+                bank
+              }}</span>
+              <span *ngIf="logo" class="text-xs h-3"><img [src]="logo" alt="" style="height:30px"/></span>
+            </div>
+          </div>
+          <div class="mb-4 relative">
+            <label class="block uppercase tracking-wide text-xs font-bold">Amount</label>
+            <span>
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="p-0 pt-4 text-black-500 sm:text-sm">
+                  {{ currency }}
+                </span>
+              </div>
+
+              <input class="w-full shadow-inner p-4 pl-12 block sm:text-sm border-0" type="text"
+                formControlName="amount" name="name" placeholder="0.00" />
+            </span>
+          </div>
+          
+          <div *ngIf="showLoader" class="w-full h-full fixed block top-0 left-0 bg-white opacity-80 z-50">
+            <span class="text-black-700 opacity-50 top-1/2 my-0 mx-auto block relative w-2/4 h-0" style="
+              top: 50%;
+          ">
+       <div class="loader">
+      </div>
+      <div class="load-text text-xs w-full">
+       {{loaderContent}}
+      </div>
+            </span>
+          </div>
+          <div class="mb-4 z-50 flex justify-center">
+            <canvas height="60px" baseChart chartType="doughnut" [colors]="doughnutChartColors"
+              [data]="doughnutChartData" [labels]="doughnutChartLabels" [legend]="true">
+            </canvas>
+          </div>
+          <div class="mb-4 flex justify-between">
+            <input
+              class="bg-white text-gray-500 hover:bg-gray-500 hover:text-white rounded-lg px-4 py-2 mx-0 outline-none focus:shadow-outline"
+              type="submit" value="Cancel" />
+            <input
+              class="bg-white text-green-500 hover:bg-green-500 hover:text-white border border-green-500 rounded-lg px-4 py-2 mx-0 outline-none focus:shadow-outline"
+              type="submit" value="Transfer" (click)="toggleModal()" [disabled]="!isIbanValid"/>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
-
 <router-outlet></router-outlet>
